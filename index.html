@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Band Name Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@latest/skulpt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@latest/skulpt-stdlib.js"></script>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    #output { background: #000; color: #0f0; padding: 20px; font-family: monospace; white-space: pre-line; margin-top: 20px; }
+    button { padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>🎸 Band Name Generator</h1>
+  <button onclick="runit()">Start</button>
+  <div id="output"></div>
+
+  <script>
+    function builtinRead(x) {
+      if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+        throw "File not found: '" + x + "'";
+      return Sk.builtinFiles["files"][x];
+    }
+
+    function runit() {
+      const code = `
+print("Welcome to band name generator")
+city = input("What's the name of the city you grew up in?\\n")
+pet = input("What's your pet's name?\\n")
+print("Your band name: " + city + " " + pet)
+      `;
+
+      let outputDiv = document.getElementById("output");
+      outputDiv.innerHTML = "";
+      Sk.configure({
+        output: text => outputDiv.innerHTML += text + '\\n',
+        read: builtinRead,
+        inputfun: () => prompt("Please enter:"),
+        inputfunTakesPrompt: true
+      });
+      Sk.misceval.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, code))
+        .catch(err => outputDiv.innerHTML += "\\n" + err.toString());
+    }
+  </script>
+</body>
+</html>
